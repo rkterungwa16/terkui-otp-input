@@ -1,4 +1,4 @@
-import { OtpInputActions } from './constants';
+import { OtpInputActions } from "./constants";
 
 export interface OtpInputProps {
   numberOfInputs: number;
@@ -22,3 +22,5 @@ export type OtpInputAction = {
 };
 
 export type Maybe<T> = T | null;
+
+export { OtpInputActions };
