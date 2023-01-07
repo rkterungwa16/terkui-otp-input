@@ -15,7 +15,7 @@ export default function Home() {
       </Head>
       <OtpInput
         numberOfInputs={5}
-        onEntry={(value) => {
+        handleCurrentValue={(value) => {
           console.log("value -->>", value);
         }}
       />

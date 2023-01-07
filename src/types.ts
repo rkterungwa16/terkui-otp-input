@@ -2,7 +2,10 @@ import { OtpInputActions } from './constants';
 
 export interface OtpInputProps {
   numberOfInputs: number;
-  onEntry: (value: string) => unknown;
+  handleCurrentValue?: (value: string) => void;
+  inputCustomClass?: string;
+  inputCompleteCustomClass?: string;
+  inputsContainerCustomClass?: string;
 }
 
 export type OtpInputState = {
@@ -10,7 +13,7 @@ export type OtpInputState = {
   maxLength: number;
 };
 
-export type PinInputAction = {
+export type OtpInputAction = {
   type: OtpInputActions;
   payload: {
     index: number;

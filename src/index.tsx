@@ -11,7 +11,8 @@ import {
   useState,
 } from "react";
 
-import { Maybe } from "./types";
+import { Maybe, OtpInputProps } from "./types";
+import { otpInputReducer } from "./reducer";
 import {
   DEFAULT_OTP_INPUT_STATE,
   KeyboardKeys,
@@ -19,42 +20,13 @@ import {
 } from "./constants";
 import styles from "./styles.module.css";
 
-export interface PinInputProps {
-  numberOfInputs: number;
-  onEntry: (value: string) => unknown;
-}
-
-export type OtpInputState = {
-  value: string[];
-  maxLength: number;
-};
-
-export type OtpInputAction = {
-  type: OtpInputActions;
-  payload: {
-    index: number;
-    value: string;
-  };
-};
-
-export function otpInputReducer(state: OtpInputState, action: OtpInputAction) {
-  const inputValue = action.payload.value.charAt(0);
-
-  switch (action.type) {
-    case OtpInputActions.ADD_VALUE:
-      return {
-        ...state,
-        value: state.value.map((value, idx) => {
-          if (idx === action.payload.index) return inputValue;
-          return value;
-        }),
-      };
-    default:
-      return state;
-  }
-}
-
-export const OtpInput: FC<PinInputProps> = ({ numberOfInputs, onEntry }) => {
+export const OtpInput: FC<OtpInputProps> = ({
+  numberOfInputs,
+  handleCurrentValue,
+  inputCompleteCustomClass,
+  inputCustomClass,
+  inputsContainerCustomClass,
+}) => {
   const inputs = [...new Array(numberOfInputs)];
   const inputRefs = useRef<Array<Maybe<HTMLInputElement>>>(inputs);
   const [activeInput, setActiveInput] = useState(0);
@@ -67,8 +39,8 @@ export const OtpInput: FC<PinInputProps> = ({ numberOfInputs, onEntry }) => {
   });
 
   useEffect(() => {
-    onEntry(value.join(""));
-  }, [value]);
+    handleCurrentValue?.(value.join(""));
+  }, [value, handleCurrentValue]);
 
   useEffect(() => {
     if (parentInputRef.current) {
@@ -161,12 +133,17 @@ export const OtpInput: FC<PinInputProps> = ({ numberOfInputs, onEntry }) => {
         nextActiveInput++;
       }
     });
-
     setActiveInput(nextActiveInput);
   };
 
   return (
-    <div className={styles['otp__container']} ref={parentInputRef}>
+    <div
+      className={cx({
+        [styles["otp__container"]]: !inputsContainerCustomClass,
+        [inputCompleteCustomClass ?? ""]: inputsContainerCustomClass,
+      })}
+      ref={parentInputRef}
+    >
       {inputs.map((_, idx) => {
         return (
           <input
@@ -174,8 +151,12 @@ export const OtpInput: FC<PinInputProps> = ({ numberOfInputs, onEntry }) => {
             ref={(el) => (inputRefs.current[idx] = el)}
             data-id={idx}
             aria-label={`number input ${idx + 1}`}
-            className={cx(styles.otp__input, {
-              [styles["otp__input--complete"]]: value[idx] !== "",
+            className={cx({
+              [styles.otp__input]: !inputCustomClass,
+              [inputCustomClass ?? ""]: inputCustomClass,
+              [inputCompleteCustomClass
+                ? inputCompleteCustomClass
+                : styles["otp__input--complete"]]: value[idx] !== "",
             })}
             value={value[idx]}
             onFocus={handleFocus}
