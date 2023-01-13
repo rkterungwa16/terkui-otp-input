@@ -5,7 +5,6 @@ import {
   FC,
   FocusEventHandler,
   KeyboardEventHandler,
-  useEffect,
   useReducer,
   useRef,
   useState,
@@ -32,25 +31,15 @@ export const OtpInput: FC<OtpInputProps> = ({
   const [activeInput, setActiveInput] = useState(0);
   const parentInputRef = useRef<HTMLDivElement | null>(null);
 
+  inputRefs.current[activeInput]?.focus();
+
   const [{ value }, dispatch] = useReducer(otpInputReducer, {
     ...DEFAULT_OTP_INPUT_STATE,
     value: inputs.map(() => ""),
     maxLength: numberOfInputs,
   });
 
-  useEffect(() => {
-    handleCurrentValue?.(value.join(""));
-  }, [value, handleCurrentValue]);
-
-  useEffect(() => {
-    if (parentInputRef.current) {
-      Array.from(parentInputRef.current.children).forEach((el, index) => {
-        if (index === activeInput) {
-          inputRefs.current[index]?.focus();
-        }
-      });
-    }
-  }, [parentInputRef, activeInput]);
+  handleCurrentValue?.(value.join(""));
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     const {
@@ -82,7 +71,6 @@ export const OtpInput: FC<OtpInputProps> = ({
 
   const handleOnChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const { value } = e.target;
-
     changeCodeAtFocus(value[0]);
     focusNextInput();
   };
@@ -112,17 +100,28 @@ export const OtpInput: FC<OtpInputProps> = ({
 
   const handleOnPaste: ClipboardEventHandler<HTMLInputElement> = (e) => {
     e.preventDefault();
+    let otpInputs: string[];
+    let nextActiveInput: number;
 
-    const otpInputs = value;
-    let nextActiveInput = activeInput;
+    otpInputs = value;
+    nextActiveInput = activeInput;
 
     const pastedData = e.clipboardData
       .getData("text/plain")
       .slice(0, numberOfInputs - activeInput)
       .split("");
 
+    // For each current input, insert the next lowest occuring number.
+    // Since otp inputs numbers aren't large enough to be worried about array.shift optimization
     otpInputs.forEach((_, index) => {
-      if (index >= activeInput && pastedData.length > 0) {
+      if (
+        index >= activeInput &&
+        pastedData.length > 0 &&
+        index < numberOfInputs
+      ) {
+        // THe aim of this code is to replace the item in this array at a particular location with the current first item
+        // on pasted data
+        // shift removes the first item on the string on each iteration.
         dispatch({
           type: OtpInputActions.ADD_VALUE,
           payload: {
@@ -130,10 +129,17 @@ export const OtpInput: FC<OtpInputProps> = ({
             value: pastedData.shift() ?? "",
           },
         });
-        nextActiveInput++;
+
+        // If the input element at the last postion, set the active index to be array last position
+        if (index + 1 === numberOfInputs) {
+          nextActiveInput = index;
+        } else {
+          nextActiveInput = nextActiveInput + 1;
+        }
       }
     });
     setActiveInput(nextActiveInput);
+    inputRefs.current[nextActiveInput]?.focus();
   };
 
   return (
