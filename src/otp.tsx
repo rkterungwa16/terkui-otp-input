@@ -27,9 +27,8 @@ export const OtpInput: FC<OtpInputProps> = ({
   inputsContainerCustomClass,
 }) => {
   const inputs = [...new Array(numberOfInputs)];
-  const inputRefs = useRef<Array<Maybe<HTMLInputElement>>>(inputs);
+  const inputRefs = useRef<Array<HTMLInputElement | null>>(inputs);
   const [activeInput, setActiveInput] = useState(0);
-  const parentInputRef = useRef<HTMLDivElement | null>(null);
 
   inputRefs.current[activeInput]?.focus();
 
@@ -71,7 +70,7 @@ export const OtpInput: FC<OtpInputProps> = ({
 
   const handleOnChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const { value } = e.target;
-    changeCodeAtFocus(value[0]);
+    changeCodeAtFocus(value);
     focusNextInput();
   };
 
@@ -142,19 +141,22 @@ export const OtpInput: FC<OtpInputProps> = ({
     inputRefs.current[nextActiveInput]?.focus();
   };
 
+  const handleRefCallback = (idx: number) => {
+    return (el: HTMLInputElement | null) => (inputRefs.current[idx] = el);
+  };
+
   return (
     <div
       className={cx({
         [styles["otp__container"]]: !inputsContainerCustomClass,
         [inputCompleteCustomClass ?? ""]: inputsContainerCustomClass,
       })}
-      ref={parentInputRef}
     >
       {inputs.map((_, idx) => {
         return (
           <input
             key={idx}
-            ref={(el) => (inputRefs.current[idx] = el)}
+            ref={handleRefCallback(idx)}
             data-id={idx}
             aria-label={`number input ${idx + 1}`}
             className={cx({

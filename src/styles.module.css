@@ -15,6 +15,7 @@
   text-align: center;
   width: 3.65rem;
   height: 3.65rem;
+  margin: 0.5rem;
 }
 
 .otp__input--complete {
