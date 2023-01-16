@@ -5,19 +5,24 @@ import {
   FC,
   FocusEventHandler,
   KeyboardEventHandler,
-  useReducer,
   useRef,
   useState,
 } from "react";
 
-import { Maybe, OtpInputProps } from "./types";
-import { otpInputReducer } from "./reducer";
+import { InputElements, OtpInputProps } from "./types";
 import {
-  DEFAULT_OTP_INPUT_STATE,
   KeyboardKeys,
-  OtpInputActions,
 } from "./constants";
 import styles from "./styles.module.css";
+
+const updatedValues = (values: string[], index: number, value: string) => {
+  const inputValue = value.split("").pop() || "";
+  return values.map((value, idx) => {
+    // Find a replace the existing value with the new input
+    if (idx === index) return inputValue;
+    return value;
+  });
+};
 
 export const OtpInput: FC<OtpInputProps> = ({
   numberOfInputs,
@@ -26,19 +31,14 @@ export const OtpInput: FC<OtpInputProps> = ({
   inputCustomClass,
   inputsContainerCustomClass,
 }) => {
-  const inputs = [...new Array(numberOfInputs)];
-  const inputRefs = useRef<Array<HTMLInputElement | null>>(inputs);
+  const inputs: InputElements = [...new Array(numberOfInputs)];
+  const inputRefs = useRef<InputElements>(inputs);
   const [activeInput, setActiveInput] = useState(0);
+  const [inputValues, setInputValues] = useState(inputs.map(() => ""));
 
   inputRefs.current[activeInput]?.focus();
 
-  const [{ value }, dispatch] = useReducer(otpInputReducer, {
-    ...DEFAULT_OTP_INPUT_STATE,
-    value: inputs.map(() => ""),
-    maxLength: numberOfInputs,
-  });
-
-  handleCurrentValue?.(value.join(""));
+  handleCurrentValue?.(inputValues.join(""));
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     const {
@@ -52,6 +52,7 @@ export const OtpInput: FC<OtpInputProps> = ({
       setActiveInput(activeInput - 1);
     }
   };
+
   const focusNextInput = () => {
     if (activeInput < numberOfInputs - 1) {
       setActiveInput(activeInput + 1);
@@ -59,13 +60,7 @@ export const OtpInput: FC<OtpInputProps> = ({
   };
 
   const changeCodeAtFocus = (value: string) => {
-    dispatch({
-      type: OtpInputActions.ADD_VALUE,
-      payload: {
-        index: activeInput,
-        value,
-      },
-    });
+    setInputValues(updatedValues(inputValues, activeInput, value));
   };
 
   const handleOnChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -102,7 +97,7 @@ export const OtpInput: FC<OtpInputProps> = ({
     let otpInputs: string[];
     let nextActiveInput: number;
 
-    otpInputs = value;
+    otpInputs = inputValues;
     nextActiveInput = activeInput;
 
     const pastedData = e.clipboardData
@@ -112,6 +107,7 @@ export const OtpInput: FC<OtpInputProps> = ({
 
     // For each current input, insert the next lowest occuring number.
     // Since otp inputs numbers aren't large enough to be worried about array.shift optimization
+    let currentInputValues = inputValues;
     otpInputs.forEach((_, index) => {
       if (
         index >= activeInput &&
@@ -121,13 +117,12 @@ export const OtpInput: FC<OtpInputProps> = ({
         // THe aim of this code is to replace the item in this array at a particular location with the current first item
         // on pasted data
         // shift removes the first item on the string on each iteration.
-        dispatch({
-          type: OtpInputActions.ADD_VALUE,
-          payload: {
-            index,
-            value: pastedData.shift() ?? "",
-          },
-        });
+
+        currentInputValues = updatedValues(
+          currentInputValues,
+          index,
+          pastedData.shift() ?? ""
+        );
 
         // If the input element at the last postion, set the active index to be array last position
         if (index + 1 === numberOfInputs) {
@@ -137,6 +132,8 @@ export const OtpInput: FC<OtpInputProps> = ({
         }
       }
     });
+
+    setInputValues(currentInputValues);
     setActiveInput(nextActiveInput);
     inputRefs.current[nextActiveInput]?.focus();
   };
@@ -164,9 +161,9 @@ export const OtpInput: FC<OtpInputProps> = ({
               [inputCustomClass ?? ""]: inputCustomClass,
               [inputCompleteCustomClass
                 ? inputCompleteCustomClass
-                : styles["otp__input--complete"]]: value[idx] !== "",
+                : styles["otp__input--complete"]]: inputValues[idx] !== "",
             })}
-            value={value[idx]}
+            value={inputValues[idx]}
             onFocus={handleFocus}
             onKeyDown={handleOnKeyDown}
             onChange={handleOnChange}

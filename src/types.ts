@@ -23,4 +23,6 @@ export type OtpInputAction = {
 
 export type Maybe<T> = T | null;
 
+export type InputElements = Array<HTMLInputElement | null>;
+
 export { OtpInputActions };
