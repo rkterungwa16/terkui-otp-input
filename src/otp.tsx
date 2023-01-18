@@ -10,9 +10,7 @@ import {
 } from "react";
 
 import { InputElements, OtpInputProps } from "./types";
-import {
-  KeyboardKeys,
-} from "./constants";
+import { KeyboardKeys } from "./constants";
 import styles from "./styles.module.css";
 
 const updatedValues = (values: string[], index: number, value: string) => {
@@ -108,7 +106,7 @@ export const OtpInput: FC<OtpInputProps> = ({
     // For each current input, insert the next lowest occuring number.
     // Since otp inputs numbers aren't large enough to be worried about array.shift optimization
     let currentInputValues = inputValues;
-    otpInputs.forEach((_, index) => {
+    for (let index = 0; index < otpInputs.length; index++) {
       if (
         index >= activeInput &&
         pastedData.length > 0 &&
@@ -131,7 +129,31 @@ export const OtpInput: FC<OtpInputProps> = ({
           nextActiveInput = nextActiveInput + 1;
         }
       }
-    });
+    }
+    // otpInputs.forEach((_, index) => {
+    //   if (
+    //     index >= activeInput &&
+    //     pastedData.length > 0 &&
+    //     index < numberOfInputs
+    //   ) {
+    //     // THe aim of this code is to replace the item in this array at a particular location with the current first item
+    //     // on pasted data
+    //     // shift removes the first item on the string on each iteration.
+
+    //     currentInputValues = updatedValues(
+    //       currentInputValues,
+    //       index,
+    //       pastedData.shift() ?? ""
+    //     );
+
+    //     // If the input element at the last postion, set the active index to be array last position
+    //     if (index + 1 === numberOfInputs) {
+    //       nextActiveInput = index;
+    //     } else {
+    //       nextActiveInput = nextActiveInput + 1;
+    //     }
+    //   }
+    // });
 
     setInputValues(currentInputValues);
     setActiveInput(nextActiveInput);
