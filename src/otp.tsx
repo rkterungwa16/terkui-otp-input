@@ -177,7 +177,7 @@ export const OtpInput: FC<OtpInputProps> = ({
             key={idx}
             ref={handleRefCallback(idx)}
             data-id={idx}
-            aria-label={`number input ${idx + 1}`}
+            aria-label={`input position ${idx + 1}`}
             className={cx({
               [styles.otp__input]: !inputCustomClass,
               [inputCustomClass ?? ""]: inputCustomClass,
