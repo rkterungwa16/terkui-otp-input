@@ -1,4 +1,6 @@
+# TerkUI OTP input component
 
+A flexible React component for rendering custom otp codes.
 
 ## Getting Started
 
