@@ -5,7 +5,8 @@
 import "@testing-library/jest-dom/extend-expect";
 
 import { otpInputReducer } from "./reducer";
-import { DEFAULT_OTP_INPUT_STATE, OtpInputActions } from "./constants";
+import { DEFAULT_OTP_INPUT_STATE } from "./constants";
+import { OtpInputActions } from "./types";
 
 describe("otpInputReducer", () => {
   it("exists", () => {

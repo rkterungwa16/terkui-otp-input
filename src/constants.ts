@@ -1,9 +1,5 @@
 import { OtpInputState } from './types';
 
-export enum OtpInputActions {
-  ADD_VALUE = 'add_value',
-}
-
 export const DEFAULT_OTP_INPUT_STATE: OtpInputState = {
   value: [''],
   maxLength: 1,

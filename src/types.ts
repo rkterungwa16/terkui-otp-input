@@ -1,4 +1,7 @@
-import { OtpInputActions } from "./constants";
+
+export enum OtpInputActions {
+  ADD_VALUE = 'add_value',
+}
 
 export interface OtpInputProps {
   numberOfInputs: number;
@@ -25,4 +28,3 @@ export type Maybe<T> = T | null;
 
 export type InputElements = Array<HTMLInputElement | null>;
 
-export { OtpInputActions };

@@ -1,5 +1,5 @@
-import { OtpInputActions } from "./constants";
-import { OtpInputState, OtpInputAction } from "./types";
+
+import { OtpInputState, OtpInputAction, OtpInputActions } from "./types";
 
 export function otpInputReducer(state: OtpInputState, action: OtpInputAction) {
   // This ensures the latest value in an input is selected
