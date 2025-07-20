@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import "@testing-library/jest-dom/extend-expect";
+import "@testing-library/jest-dom";
 
 import { otpInputReducer } from "./reducer";
 import { DEFAULT_OTP_INPUT_STATE } from "./constants";
@@ -35,7 +35,7 @@ describe("otpInputReducer", () => {
             index: 0,
             value: "1",
           },
-        }
+        },
       );
 
       expect(stateOne.value).toEqual(["1", "", ""]);
@@ -70,7 +70,7 @@ describe("otpInputReducer", () => {
             index: 0,
             value: "1",
           },
-        }
+        },
       );
 
       const stateTwo = otpInputReducer(stateOne, {
@@ -113,7 +113,7 @@ describe("otpInputReducer", () => {
             index: 0,
             value: "1",
           },
-        }
+        },
       );
 
       expect(stateOne.value).toEqual(["1", ""]);

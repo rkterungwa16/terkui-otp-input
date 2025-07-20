@@ -14,7 +14,7 @@ describe("OtpInput", () => {
 
   it("renders the correct number of inputs", () => {
     const { getAllByLabelText } = render(
-      <OtpInput numberOfInputs={6} handleCurrentValue={() => {}} />
+      <OtpInput numberOfInputs={6} handleCurrentValue={() => {}} />,
     );
 
     expect(getAllByLabelText(/input position/i).length).toEqual(6);
@@ -22,7 +22,7 @@ describe("OtpInput", () => {
 
   it("updates the proper input onChange", () => {
     const { getByLabelText } = render(
-      <OtpInput numberOfInputs={6} handleCurrentValue={() => {}} />
+      <OtpInput numberOfInputs={6} handleCurrentValue={() => {}} />,
     );
 
     const firstInput = getByLabelText(/input position 1/i) as HTMLInputElement;
@@ -49,7 +49,7 @@ describe("OtpInput", () => {
 
   it("only allows one digit per input and digit should be latest entered into an input", () => {
     const { getByLabelText } = render(
-      <OtpInput numberOfInputs={6} handleCurrentValue={() => {}} />
+      <OtpInput numberOfInputs={6} handleCurrentValue={() => {}} />,
     );
 
     const firstInput = getByLabelText(/input position 1/i) as HTMLInputElement;
@@ -78,22 +78,22 @@ describe("OtpInput", () => {
     const handleCurrentValue = jest.fn();
 
     const { getByLabelText } = render(
-      <OtpInput numberOfInputs={2} handleCurrentValue={handleCurrentValue} />
+      <OtpInput numberOfInputs={2} handleCurrentValue={handleCurrentValue} />,
     );
 
-    expect(handleCurrentValue).toBeCalledTimes(1);
+    expect(handleCurrentValue).toHaveBeenCalledTimes(1);
 
     const firstInput = getByLabelText(/input position 1/i) as HTMLInputElement;
     const secondInput = getByLabelText(/input position 2/i) as HTMLInputElement;
 
     fireEvent.input(firstInput, { target: { value: "1" } });
 
-    expect(handleCurrentValue).toBeCalledTimes(3);
-    expect(handleCurrentValue).toBeCalledWith("1");
+    expect(handleCurrentValue).toHaveBeenCalledTimes(3);
+    expect(handleCurrentValue).toHaveBeenCalledWith("1");
 
     fireEvent.input(secondInput, { target: { value: "2" } });
 
-    expect(handleCurrentValue).toBeCalledTimes(4);
+    expect(handleCurrentValue).toHaveBeenCalledTimes(4);
     expect(handleCurrentValue).toHaveBeenCalledWith("12");
   });
 });

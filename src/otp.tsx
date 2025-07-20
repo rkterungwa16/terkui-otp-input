@@ -119,7 +119,7 @@ export const OtpInput: FC<OtpInputProps> = ({
         currentInputValues = updatedValues(
           currentInputValues,
           index,
-          pastedData.shift() ?? ""
+          pastedData.shift() ?? "",
         );
 
         // If the input element at the last postion, set the active index to be array last position
@@ -161,7 +161,9 @@ export const OtpInput: FC<OtpInputProps> = ({
   };
 
   const handleRefCallback = (idx: number) => {
-    return (el: HTMLInputElement | null) => (inputRefs.current[idx] = el);
+    return (el: HTMLInputElement | null) => {
+      inputRefs.current[idx] = el;
+    };
   };
 
   return (

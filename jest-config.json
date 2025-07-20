@@ -1,23 +1,17 @@
 {
-  "moduleFileExtensions": [
-    "js",
-    "json",
-    "ts",
-    "tsx"
-  ],
+  "moduleFileExtensions": ["js", "json", "ts", "tsx"],
   "resetMocks": true,
   "rootDir": "src",
   "testRegex": "/src/.*\\.test\\.tsx?$",
-  "testPathIgnorePatterns": [
-    "<rootDir>/node_modules/",
-    "<rootDir>/.next/"
-  ],
-  "transformIgnorePatterns": [
-    "^.+\\.module\\.(css|sass|scss)$"
-  ],
+  "testPathIgnorePatterns": ["<rootDir>/node_modules/", "<rootDir>/.next/"],
+  "transformIgnorePatterns": ["^.+\\.module\\.(css|sass|scss)$"],
   "coverageDirectory": "./coverage",
   "testEnvironment": "jsdom",
   "moduleNameMapper": {
     "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
-  }
+  },
+  "transform": {
+    "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/../.jest/babel-transform.js"
+  },
+  "setupFilesAfterEnv": ["@testing-library/jest-dom"]
 }
